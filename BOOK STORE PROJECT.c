@@ -12,6 +12,27 @@
 int num,x,bP,sP,p,s,cP,cS,pR,cY,dd,mm,yyyy;
 int eNum,eX,eBp,eSp,eP,eS,eCp,ePr,eCy,eCs;
 FILE *fptr;
+FILE *fdt;
+int c;
+
+void itemData(){
+    fdt = fopen("items.txt", "w");
+    if(fdt == NULL){
+        exit(1);
+    }else{
+        fprintf(fdt, "%d", num);
+    }
+    fclose(fdt);
+}
+
+
+void openitemData(){
+    fdt = fopen("items.txt", "rb");
+    
+    fscanf(fdt, "%d", &c);
+    fclose(fdt);
+}
+
 void savedData(){
     
     fptr = fopen("data.txt", "r+");
@@ -19,38 +40,42 @@ void savedData(){
         exit(1);
     }else{
         fprintf(fptr, "            BOOK STORE SALES SUMMARY ");
-        fprintf(fptr, "                         DATE: %d/%d/%d\n", dd, mm, yyyy);
+        fprintf(fptr, "                         DATE: %s\n", __DATE__);
+        fprintf(fptr, "                         TIME: %s\n", __TIME__);
         fprintf(fptr, "Initial number of books: %d\n", cY);
-        fprintf(fptr, "Books remaining: %d\n", eNum);
-        fprintf(fptr, "Books sold: %d\n", cY-eNum);
-        fprintf(fptr, "Buying price: %d\n", bP);
-        fprintf(fptr, "Selling price: %d\n", sP);
-        fprintf(fptr, "Profit per book: %d\n", p);
-        fprintf(fptr, "The last sales: %d\n", s);
-        fprintf(fptr, "Cumulative profit: %d\n", cP);
-        fprintf(fptr, "Cumulative sales: %d\n", cS);
-        fprintf(fptr, "Profit in the last sale: %d\n", pR);
+        fprintf(fptr, "Books remaining: %d\n", num);
+        fprintf(fptr, "Books sold: %d\n", cY-num);
+        fprintf(fptr, "Buying price: sh.%d\n", bP);
+        fprintf(fptr, "Selling price: sh.%d\n", sP);
+        fprintf(fptr, "Profit per book: sh.%d\n", p);
+        fprintf(fptr, "The last sales: sh.%d\n", s);
+        fprintf(fptr, "Cumulative profit: sh.%d\n", cP);
+        fprintf(fptr, "Cumulative sales: sh.%d\n", cS);
+        fprintf(fptr, "Profit in the last sale: sh.%d\n", pR);
         fclose(fptr);
         
 }
 }
 
 void date(){
-    printf("Enter the current date: ");
-    scanf("%d %d %d", &dd, &mm, &yyyy);
-    printf("The current date is: %d/%d/%d\n", dd, mm, yyyy);
+    printf("Current date: %s\n ", __DATE__);
+    
 }
 
 void totalItems(){
-    fptr=fopen("data.text", "r+");
-    if(fscanf(fptr, "%d", &eNum) !=EOF){
-        printf("no of books %d\n", eNum);
+    openitemData();
+    if(c != 0){
+        printf("no of books %d\n", c);
         printf("Enter the number of books: ");
-        scanf("%d", &num);
+        scanf("%d", &eNum);
+        num=eNum + c;
+    
         cY = num;
+
+
         printf("The total number of books is: %d\n", num);
     }else{
-        printf("The number of books is: %d\n", eNum);
+        printf("The number of books is: 0\n");
         printf("Enter the number of books: ");
         scanf("%d", &num);
         num=num + eNum;
@@ -103,8 +128,10 @@ void sell(){
         if(x==1){
             itemsAfterAddition();
             price();
+            itemData();
             sell();
         }else{
+            itemData();
             sell();
         }
     }else{
@@ -121,8 +148,12 @@ void sell(){
             if(x==1){
                 itemsAfterAddition();
                 price();
+                itemData();
+                savedData();
                 sell();
             }else{
+                itemData();
+                savedData();
                 sell();
             }
         }
@@ -133,25 +164,20 @@ void sell(){
             if(x==1){
                 itemsAfterAddition();
                 price();
+                itemData();
+                savedData();
                 sell();
             }else{
                 printf("You can no longer sell.Add more books\n");
                 itemsAfterAddition();
                 price();
+                itemData();
+                savedData();
                 sell();
             }
         }
     }
-    eNum=num;
-    eX=x;
-    eBp=bP;
-    eSp=sP;
-    eP=p;
-    eS=s;
-    eCp=cP;
-    ePr=pR;
-    eCy=cY;
-    eCs=cS;
+    itemData();
     savedData();
     sell();
 }
